@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f6f7f9">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Blood Tests">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Blood Tests</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="title">
+    <h1>Blood Tests</h1>
+    <p id="sub" class="muted"></p>
+  </div>
+  <div class="controls">
+    <div class="seg" id="viewSeg" role="group" aria-label="View">
+      <button data-view="combined" class="on">Combined</button>
+      <button data-view="individual">Individual</button>
+    </div>
+    <div class="seg" id="rangeSeg" role="group" aria-label="Date range">
+      <button data-range="all" class="on">All Time</button>
+      <button data-range="12">Last 12 Months</button>
+      <button data-range="6">Last 6 Months</button>
+    </div>
+    <input id="search" type="search" placeholder="Search markers…" aria-label="Search markers">
+    <label id="importBtn" class="btn filebtn" title="Add results from a pathology PDF">Import PDF…<input id="pdfInput" type="file" accept="application/pdf,.pdf" aria-label="Import a pathology PDF"></label>
+    <button id="removeBtn" class="btn" type="button" title="Remove one set of results by date">Remove results…</button>
+    
+    <label class="chk" title="Only markers whose most recent result is outside the good range"><input type="checkbox" id="onlyCurrent"> Only currently out of range</label>
+    <label class="chk"><input type="checkbox" id="onlyFlagged"> Only markers with red results</label>
+  </div>
+  <nav class="chips" id="catChips" aria-label="Filter by heading"></nav>
+</header>
+<main id="main"><p class="muted">Loading…</p></main>
+<div id="tip" class="tip" hidden></div>
+<dialog id="importDlg"></dialog>
+<div id="toast" class="toast" hidden></div>
+<script src="vendor/d3.min.js"></script>
+<script src="catalog.js"></script>
+<script src="advice.js"></script>
+<script src="lib.js"></script>
+<script>
+// PDF reader (pdf.js) ships inside the app. Files use a .js extension so every platform serves them as JavaScript.
+window.__loadPdfjs = async function () {
+  if (window.__pdfjs) return window.__pdfjs;
+  const lib = await import('./vendor/pdf.min.js');
+  lib.GlobalWorkerOptions.workerSrc = new URL('./vendor/pdf.worker.min.js', document.baseURI).href;
+  return (window.__pdfjs = lib);
+};
+</script>
+<script>
+// Offline support when installed from the web (not inside the native wrapper).
+if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())) {
+  navigator.serviceWorker.register('sw.js').catch(function () {});
+}
+</script>
+<script src="app.js"></script>
+</body>
+</html>
